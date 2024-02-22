@@ -57,12 +57,12 @@ public final class Constants {
         public static final int armFollowerID = 31;
         public static final int encoderID = 30;
 
-        // DEFAULT PID (LEAVE THIS)
+        // IGNORE THIS
         public static final double armDefaultP = 0;
         public static final double armDefaultI = 0;
         public static final double armDefaultD = 0;
 
-        // ACTUAL PID (EDIT THIS)
+        // ACTUAL ARM PID
         public static final double armP = 0;
         public static final double armI = 0;
         public static final double armD = 0;

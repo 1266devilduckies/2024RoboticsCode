@@ -17,16 +17,18 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.IntakeSpin;
+import frc.robot.commands.MoveArm;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeSpinState;
 
 public class RobotContainer {
 
   public DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(this);
   public IntakeSubsystem intakeSubsystem = new IntakeSubsystem(this);
-  public ArmSubsystem conveyerSubsystem = new ArmSubsystem(this);
+  public ArmSubsystem armSubsystem = new ArmSubsystem(this);
 
   public SendableChooser<SequentialCommandGroup> autonomousMode = new SendableChooser<SequentialCommandGroup>();
 
@@ -44,35 +46,22 @@ public class RobotContainer {
   }
 
   private void registerNamedCommands(){
-    /*NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
-      new IntakeMove(intakeSubsystem, true), 
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN),
-      new ConveyerSpin(conveyerSubsystem, ConveyerState.TAKE_IN)));
+    NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
+      new MoveArm(armSubsystem, ArmState.GROUND_PICKUP), 
+      new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN)));
 
     NamedCommands.registerCommand("StopIntake", new SequentialCommandGroup(
-      new IntakeMove(intakeSubsystem, false),
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED),
-      new ConveyerSpin(conveyerSubsystem, ConveyerState.HOLDING)));*/
+      new MoveArm(armSubsystem, ArmState.INITIAL),
+      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED)));
   }
 
   private void configureBindings() {
-    /*driverJoystick.cross().onTrue(new SequentialCommandGroup(
-      new IntakeMove(intakeSubsystem, true), 
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN), 
-      new ConveyerSpin(conveyerSubsystem, ConveyerState.TAKE_IN)));
+    driverJoystick.cross().onTrue(new SequentialCommandGroup(
+      new MoveArm(armSubsystem, ArmState.GROUND_PICKUP), 
+      new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN)));
     driverJoystick.cross().onFalse(new SequentialCommandGroup(
-      new IntakeMove(intakeSubsystem, false),
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED),
-      new ConveyerSpin(conveyerSubsystem, ConveyerState.HOLDING)));
-
-    driverJoystick.circle().onTrue(new SequentialCommandGroup(
-      new IntakeMove(intakeSubsystem, true),
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.SHOOT_OUT),
-      new ConveyerSpin(conveyerSubsystem, ConveyerState.SHOOT_OUT)));
-    driverJoystick.circle().onFalse(new SequentialCommandGroup(
-      new IntakeMove(intakeSubsystem, false),
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED),
-      new ConveyerSpin(conveyerSubsystem, ConveyerState.STOPPED)));*/
+      new MoveArm(armSubsystem, ArmState.INITIAL),
+      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED)));\
   }
 
   public SequentialCommandGroup getAutoCommandGroup(){

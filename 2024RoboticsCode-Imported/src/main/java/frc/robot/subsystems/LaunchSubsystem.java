@@ -46,4 +46,8 @@ public class LaunchSubsystem extends SubsystemBase {
         launchMotor.setControl(new VelocityDutyCycle(velocity));
     }
 
+    public void stopLaunchMotors(){
+        launchMotor.set(0);
+    }
+
 }
