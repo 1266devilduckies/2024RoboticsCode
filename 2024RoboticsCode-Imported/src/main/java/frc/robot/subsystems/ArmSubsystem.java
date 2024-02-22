@@ -14,9 +14,10 @@ import frc.robot.RobotContainer;
 public class ArmSubsystem extends SubsystemBase{
     
     public enum ArmState{
-        ONE(10),
-        TWO(35),
-        THREE(70);
+        INITIAL(10),
+        SHOOT_SPEAKER_FRONT(20),
+        GROUND_PICKUP(30),
+        SHOOT_SPEAKER_SIDE_CORNER(20);
 
         private double angle;
 
@@ -40,7 +41,7 @@ public class ArmSubsystem extends SubsystemBase{
     TalonFXConfiguration armMotorConfiguration;
     TalonFXConfiguration armMotorFollowerConfiguration;
 
-    ArmState currentArmState = ArmState.ONE;
+    ArmState currentArmState = ArmState.INITIAL;
 
     public ArmSubsystem(RobotContainer robotContainer){
         armMotorConfiguration = new TalonFXConfiguration();

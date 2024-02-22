@@ -57,14 +57,24 @@ public final class Constants {
         public static final int armFollowerID = 31;
         public static final int encoderID = 30;
 
+        // DEFAULT PID (LEAVE THIS)
         public static final double armDefaultP = 0;
         public static final double armDefaultI = 0;
         public static final double armDefaultD = 0;
+
+        // ACTUAL PID (EDIT THIS)
+        public static final double armP = 0;
+        public static final double armI = 0;
+        public static final double armD = 0;
     }
 
     public static class Launch {
         public static final int launchMotorID = 12;
         public static final int launchMotorFollowerID = 13;
+
+        public static final double launchP = 0;
+        public static final double launchI = 0;
+        public static final double launchD = 0;
     }
 
     public static class AutoTrajectoryFileNames{

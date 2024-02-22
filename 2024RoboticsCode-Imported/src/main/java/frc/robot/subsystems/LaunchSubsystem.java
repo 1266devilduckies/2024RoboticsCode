@@ -20,13 +20,13 @@ public class LaunchSubsystem extends SubsystemBase {
 
     public LaunchSubsystem(RobotContainer robotContainer){
         //config motors
-        launchMotorConfig.Slot0.kP = Constants.Launch.launchMotorP;
-        launchMotorConfig.Slot0.kI = Constants.Launch.launchMotorI;
-        launchMotorConfig.Slot0.kD = Constants.Launch.launchMotorD;
+        launchMotorConfig.Slot0.kP = Constants.Launch.launchP;
+        launchMotorConfig.Slot0.kI = Constants.Launch.launchI;
+        launchMotorConfig.Slot0.kD = Constants.Launch.launchD;
 
-        launchMotorFollowerConfig.Slot0.kP = Constants.Launch.launchMotorP;
-        launchMotorFollowerConfig.Slot0.kI = Constants.Launch.launchMotorI;
-        launchMotorFollowerConfig.Slot0.kD = Constants.Launch.launchMotorD;
+        launchMotorFollowerConfig.Slot0.kP = Constants.Launch.launchP;
+        launchMotorFollowerConfig.Slot0.kI = Constants.Launch.launchI;
+        launchMotorFollowerConfig.Slot0.kD = Constants.Launch.launchD;
 
         launchMotor.getConfigurator().apply(launchMotorConfig);
         launchMotorFollower.getConfigurator().apply(launchMotorFollowerConfig);
