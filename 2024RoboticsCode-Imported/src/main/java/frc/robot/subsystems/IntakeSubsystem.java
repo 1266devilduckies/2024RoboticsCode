@@ -11,9 +11,12 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.commands.IntakeSpin;
 
 public class IntakeSubsystem extends SubsystemBase {
 
@@ -24,17 +27,20 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     
     VictorSPX intakeSpinMotor = new VictorSPX(Constants.Intake.spinID);
-    VictorSPX intakeSpinMotorFollower = new VictorSPX(Constants.Intake.spinIDFollower);
+    TalonSRX intakeSpinMotorFollower = new TalonSRX(Constants.Intake.spinIDFollower);
 
     IntakeSpinState intakeSpinState = IntakeSpinState.STOPPED;
 
+    RobotContainer robotContainer;
+
     public IntakeSubsystem(RobotContainer robotContainer){
+        this.robotContainer = robotContainer;
         configure();
     }
 
     private void configure(){
-        intakeSpinMotor.setNeutralMode(NeutralMode.Coast);
-        intakeSpinMotorFollower.setNeutralMode(NeutralMode.Coast);
+        intakeSpinMotor.setNeutralMode(NeutralMode.Brake);
+        intakeSpinMotorFollower.setNeutralMode(NeutralMode.Brake);
 
         intakeSpinMotorFollower.follow(intakeSpinMotor);
     }
@@ -54,6 +60,14 @@ public class IntakeSubsystem extends SubsystemBase {
             case SHOOT_OUT:
                 intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeShootOutSpeed);
                 SmartDashboard.putString("SpinState", "SHOOT_OUT");
+        }
+
+        // check for holding note, then pull it back a bit
+        if(robotContainer.getLaunchSubsystem().checkForNote()){
+            new SequentialCommandGroup(
+                new IntakeSpin(this, IntakeSpinState.SHOOT_OUT), 
+                new WaitCommand(0.1),
+                new IntakeSpin(this, IntakeSpinState.STOPPED));
         }
     }
 

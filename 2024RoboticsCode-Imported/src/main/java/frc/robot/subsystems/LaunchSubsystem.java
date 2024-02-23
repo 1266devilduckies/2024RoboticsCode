@@ -18,6 +18,9 @@ public class LaunchSubsystem extends SubsystemBase {
     TalonFXConfiguration launchMotorConfig;
     TalonFXConfiguration launchMotorFollowerConfig;
 
+    private boolean holdingNote = false;
+    private double lastTickPosition = 0;
+
     public LaunchSubsystem(RobotContainer robotContainer){
         //config motors
         launchMotorConfig.Slot0.kP = Constants.Launch.launchP;
@@ -31,8 +34,8 @@ public class LaunchSubsystem extends SubsystemBase {
         launchMotor.getConfigurator().apply(launchMotorConfig);
         launchMotorFollower.getConfigurator().apply(launchMotorFollowerConfig);
 
-        launchMotor.setNeutralMode(NeutralModeValue.Brake);
-        launchMotorFollower.setNeutralMode(NeutralModeValue.Brake);
+        launchMotor.setNeutralMode(NeutralModeValue.Coast);
+        launchMotorFollower.setNeutralMode(NeutralModeValue.Coast);
 
         launchMotorFollower.setControl(new Follower(launchMotor.getDeviceID(), false));
     }
@@ -48,6 +51,25 @@ public class LaunchSubsystem extends SubsystemBase {
 
     public void stopLaunchMotors(){
         launchMotor.set(0);
+
+        lastTickPosition = launchMotor.getPosition().getValueAsDouble();
+    }
+
+    public void setHoldingNote(boolean holding){
+        this.holdingNote = holding;
+    }
+
+    public boolean checkForNote(){
+        // if not holding note
+        if(!holdingNote){
+            // if difference from last encoder location to current is greater then a small threshold
+            if(Math.abs(lastTickPosition - launchMotor.getPosition().getValueAsDouble()) > 0.1){
+                // return true, set holding note to true
+                setHoldingNote(false);
+                return true;
+            }
+        }
+        return false;
     }
 
 }

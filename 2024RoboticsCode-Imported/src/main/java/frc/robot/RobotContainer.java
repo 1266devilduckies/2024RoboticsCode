@@ -18,9 +18,11 @@ import frc.robot.Constants.DriverConstants;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.IntakeSpin;
 import frc.robot.commands.MoveArm;
+import frc.robot.commands.Shoot;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.LaunchSubsystem;
 import frc.robot.subsystems.ArmSubsystem.ArmState;
 import frc.robot.subsystems.IntakeSubsystem.IntakeSpinState;
 
@@ -29,6 +31,7 @@ public class RobotContainer {
   public DrivetrainSubsystem drivetrainSubsystem = new DrivetrainSubsystem(this);
   public IntakeSubsystem intakeSubsystem = new IntakeSubsystem(this);
   public ArmSubsystem armSubsystem = new ArmSubsystem(this);
+  public LaunchSubsystem launchSubsystem = new LaunchSubsystem(this);
 
   public SendableChooser<SequentialCommandGroup> autonomousMode = new SendableChooser<SequentialCommandGroup>();
 
@@ -51,17 +54,34 @@ public class RobotContainer {
       new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN)));
 
     NamedCommands.registerCommand("StopIntake", new SequentialCommandGroup(
-      new MoveArm(armSubsystem, ArmState.INITIAL),
+      new MoveArm(armSubsystem, ArmState.NEUTRAL),
       new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED)));
+    
+    NamedCommands.registerCommand("Shoot", new SequentialCommandGroup(
+      new MoveArm(armSubsystem, ArmState.SHOOT_SPEAKER_FRONT),
+      new Shoot(launchSubsystem, intakeSubsystem, 500),
+      new MoveArm(armSubsystem, ArmState.NEUTRAL)
+    ));
   }
 
   private void configureBindings() {
+    // Intake note and return
     driverJoystick.cross().onTrue(new SequentialCommandGroup(
       new MoveArm(armSubsystem, ArmState.GROUND_PICKUP), 
       new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN)));
     driverJoystick.cross().onFalse(new SequentialCommandGroup(
-      new MoveArm(armSubsystem, ArmState.INITIAL),
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED)));\
+      new MoveArm(armSubsystem, ArmState.NEUTRAL),
+      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED)));
+
+    // Shoot note and return
+    driverJoystick.circle().onTrue(new SequentialCommandGroup(
+      new MoveArm(armSubsystem, ArmState.SHOOT_SPEAKER_FRONT),
+      new Shoot(launchSubsystem, intakeSubsystem, 500)
+    ));
+    driverJoystick.circle().onFalse(new MoveArm(armSubsystem, ArmState.NEUTRAL));
+
+    // Add more later
+
   }
 
   public SequentialCommandGroup getAutoCommandGroup(){
@@ -74,6 +94,10 @@ public class RobotContainer {
 
   public DrivetrainSubsystem getDrivetrainSubsystem(){
     return drivetrainSubsystem;
+  }
+
+  public LaunchSubsystem getLaunchSubsystem(){
+    return launchSubsystem;
   }
   
 }

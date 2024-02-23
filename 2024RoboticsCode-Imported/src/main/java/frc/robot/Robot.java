@@ -78,8 +78,7 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
-    //Add -> Change motor settings for teleop driving
+    
   }
 
   @Override
