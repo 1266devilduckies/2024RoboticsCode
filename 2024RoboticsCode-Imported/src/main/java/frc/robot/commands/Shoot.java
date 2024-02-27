@@ -11,16 +11,16 @@ public class Shoot extends Command {
     private LaunchSubsystem launchSubsystem;
     private IntakeSubsystem intakeSubsystem;
 
-    private int velocity;
+    private double speed;
 
     private double startTime = 0;
     private final double timeLimit = 2;
     private final double feedTime = 0.5;
 
-    public Shoot(LaunchSubsystem subsystem, IntakeSubsystem intakeSubsystem, int velocity){
+    public Shoot(LaunchSubsystem subsystem, IntakeSubsystem intakeSubsystem, double speed){
         this.launchSubsystem = subsystem;
         this.intakeSubsystem = intakeSubsystem;
-        this.velocity = velocity;
+        this.speed = speed;
         addRequirements(launchSubsystem);
     }
 
@@ -28,7 +28,7 @@ public class Shoot extends Command {
     public void initialize(){
         startTime = Timer.getFPGATimestamp();
 
-        launchSubsystem.setLaunchMotorVelocity(velocity);
+        launchSubsystem.setLaunchMotorSpeed(-1 * speed);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class Shoot extends Command {
 
     @Override
     public boolean isFinished(){
-        return ((startTime + timeLimit) > Timer.getFPGATimestamp());
+        return ((startTime + timeLimit) < Timer.getFPGATimestamp());
     }
 
 }

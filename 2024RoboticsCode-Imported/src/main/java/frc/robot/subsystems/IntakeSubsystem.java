@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -39,8 +40,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     private void configure(){
-        intakeSpinMotor.setNeutralMode(NeutralMode.Brake);
-        intakeSpinMotorFollower.setNeutralMode(NeutralMode.Brake);
+        intakeSpinMotor.setNeutralMode(NeutralMode.Coast);
+        intakeSpinMotorFollower.setNeutralMode(NeutralMode.Coast);
+
+        intakeSpinMotorFollower.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 25, 0.5));
 
         intakeSpinMotorFollower.follow(intakeSpinMotor);
     }
@@ -50,25 +53,33 @@ public class IntakeSubsystem extends SubsystemBase {
         //set the spinMotor to whatever intakeSpinState is
         switch(intakeSpinState){
             case STOPPED:
-                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeStoppedSpeed);
+                intakeSpinMotorFollower.set(ControlMode.PercentOutput, Constants.Intake.intakeStoppedSpeed);
                 SmartDashboard.putString("SpinState", "STOPPED");
                 break;
             case TAKE_IN:
-                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeTakeInSpeed);
+                intakeSpinMotorFollower.set(ControlMode.PercentOutput, Constants.Intake.intakeTakeInSpeed);
                 SmartDashboard.putString("SpinState", "TAKE_IN");
                 break;
             case SHOOT_OUT:
-                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeShootOutSpeed);
+                intakeSpinMotorFollower.set(ControlMode.PercentOutput, Constants.Intake.intakeShootOutSpeed);
                 SmartDashboard.putString("SpinState", "SHOOT_OUT");
         }
 
+        /*
         // check for holding note, then pull it back a bit
         if(robotContainer.getLaunchSubsystem().checkForNote()){
             new SequentialCommandGroup(
                 new IntakeSpin(this, IntakeSpinState.SHOOT_OUT), 
                 new WaitCommand(0.1),
-                new IntakeSpin(this, IntakeSpinState.STOPPED));
+                new IntakeSpin(this, IntakeSpinState.STOPPED)).schedule();
+        }*/
+    }
+
+    public boolean currentSense(){
+        if(intakeSpinMotorFollower.getStatorCurrent() > 35){
+            return true;
         }
+        return false;
     }
 
     public void setSpinState(IntakeSpinState state){

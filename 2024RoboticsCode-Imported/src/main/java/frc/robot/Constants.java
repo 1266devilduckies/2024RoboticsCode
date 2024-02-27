@@ -30,13 +30,13 @@ public final class Constants {
     }
 
     public static class Intake {
-        public static final int spinID = 6;
-        public static final int spinIDFollower = 7; // shared with arm Encoder
+        public static final int spinID = 24;
+        public static final int spinIDFollower = 25; // shared with arm Encoder
 
         // Speeds
         public static final double intakeStoppedSpeed = 0;
-        public static final double intakeTakeInSpeed = 0.6;
-        public static final double intakeShootOutSpeed = -0.6;
+        public static final double intakeTakeInSpeed = -0.6;
+        public static final double intakeShootOutSpeed = 0.6;
 
         // PID
         public static final double intakeP = 0;
@@ -45,27 +45,27 @@ public final class Constants {
     }
 
     public static class Arm {
-        public static final int armID = 11;
-        public static final int armFollowerID = 31;
-        public static final int encoderID = 30; //shared with spin follower
+        public static final int armID = 6;
+        public static final int armFollowerID = 23;
+        public static final int encoderID = 25; //shared with spin follower
 
         // IGNORE THIS, AVOID CHANGING
         public static final double armDefaultP = 0;
         public static final double armDefaultI = 0;
         public static final double armDefaultD = 0;
 
-        // ARM FEED FORWARD
+        // ARM FEED FORWARD (Don't need)
         public static final double armS = 4; // voltage required to start movement
         public static final double armG = 1; // voltage required to hold position
         public static final double armV = 6; // speed
-        
+
         // PID
-        public static final double armP = 0;
+        public static final double armP = 0.5;
     }
 
     public static class Launch {
-        public static final int launchMotorID = 12;
-        public static final int launchMotorFollowerID = 13;
+        public static final int launchMotorID = 7;
+        public static final int launchMotorFollowerID = 8;
 
         // PID
         public static final double launchP = 0;

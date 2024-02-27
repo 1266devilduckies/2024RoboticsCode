@@ -49,7 +49,7 @@ public class RobotContainer {
   }
 
   private void registerNamedCommands(){
-    NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
+    /*NamedCommands.registerCommand("Intake", new SequentialCommandGroup(
       new MoveArm(armSubsystem, ArmState.GROUND_PICKUP), 
       new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN)));
 
@@ -61,22 +61,23 @@ public class RobotContainer {
       new MoveArm(armSubsystem, ArmState.SHOOT_SPEAKER_FRONT),
       new Shoot(launchSubsystem, intakeSubsystem, 500),
       new MoveArm(armSubsystem, ArmState.NEUTRAL)
-    ));
+    ));*/
   }
 
   private void configureBindings() {
     // Intake note and return
     driverJoystick.cross().onTrue(new SequentialCommandGroup(
       new MoveArm(armSubsystem, ArmState.GROUND_PICKUP), 
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN)));
+      new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN, false)));
     driverJoystick.cross().onFalse(new SequentialCommandGroup(
+      new IntakeSpin(intakeSubsystem, IntakeSpinState.TAKE_IN, true),
       new MoveArm(armSubsystem, ArmState.NEUTRAL),
-      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED)));
+      new IntakeSpin(intakeSubsystem, IntakeSpinState.STOPPED, true)));
 
     // Shoot note and return
     driverJoystick.circle().onTrue(new SequentialCommandGroup(
-      new MoveArm(armSubsystem, ArmState.SHOOT_SPEAKER_FRONT),
-      new Shoot(launchSubsystem, intakeSubsystem, 500)
+      /*new MoveArm(armSubsystem, ArmState.SHOOT_SPEAKER_FRONT),*/
+      new Shoot(launchSubsystem, intakeSubsystem, 2000)
     ));
     driverJoystick.circle().onFalse(new MoveArm(armSubsystem, ArmState.NEUTRAL));
 

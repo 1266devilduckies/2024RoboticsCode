@@ -3,9 +3,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
@@ -15,10 +17,12 @@ public class LaunchSubsystem extends SubsystemBase {
     TalonFX launchMotor = new TalonFX(Constants.Launch.launchMotorID);
     TalonFX launchMotorFollower = new TalonFX(Constants.Launch.launchMotorFollowerID);
 
-    TalonFXConfiguration launchMotorConfig;
-    TalonFXConfiguration launchMotorFollowerConfig;
+    TalonFXConfiguration launchMotorConfig = new TalonFXConfiguration();
+    TalonFXConfiguration launchMotorFollowerConfig = new TalonFXConfiguration();
 
-    private boolean holdingNote = false;
+    SlewRateLimiter launchMotorLimiter = new SlewRateLimiter(0.5);
+
+    private boolean holdingNote = true;
     private double lastTickPosition = 0;
 
     public LaunchSubsystem(RobotContainer robotContainer){
@@ -31,13 +35,21 @@ public class LaunchSubsystem extends SubsystemBase {
         launchMotorFollowerConfig.Slot0.kI = Constants.Launch.launchI;
         launchMotorFollowerConfig.Slot0.kD = Constants.Launch.launchD;
 
+        launchMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        launchMotorConfig.CurrentLimits.StatorCurrentLimit = 30;
+
+        launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimit = 30;
+
+        launchMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
+        launchMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
+
         launchMotor.getConfigurator().apply(launchMotorConfig);
         launchMotorFollower.getConfigurator().apply(launchMotorFollowerConfig);
 
         launchMotor.setNeutralMode(NeutralModeValue.Coast);
         launchMotorFollower.setNeutralMode(NeutralModeValue.Coast);
 
-        launchMotorFollower.setControl(new Follower(launchMotor.getDeviceID(), false));
     }
 
     @Override
@@ -45,31 +57,18 @@ public class LaunchSubsystem extends SubsystemBase {
         
     }
 
-    public void setLaunchMotorVelocity(int velocity){
-        launchMotor.setControl(new VelocityDutyCycle(velocity));
+    public void setLaunchMotorSpeed(double speed){
+        launchMotor.set(speed);
+        launchMotorFollower.set(speed);
     }
 
     public void stopLaunchMotors(){
         launchMotor.set(0);
-
-        lastTickPosition = launchMotor.getPosition().getValueAsDouble();
+        launchMotorFollower.set(0);
     }
 
     public void setHoldingNote(boolean holding){
         this.holdingNote = holding;
-    }
-
-    public boolean checkForNote(){
-        // if not holding note
-        if(!holdingNote){
-            // if difference from last encoder location to current is greater then a small threshold
-            if(Math.abs(lastTickPosition - launchMotor.getPosition().getValueAsDouble()) > 0.1){
-                // return true, set holding note to true
-                setHoldingNote(false);
-                return true;
-            }
-        }
-        return false;
     }
 
 }
