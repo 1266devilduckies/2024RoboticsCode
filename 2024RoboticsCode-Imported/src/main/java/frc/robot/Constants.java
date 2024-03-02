@@ -68,13 +68,15 @@ public final class Constants {
         public static final int launchMotorFollowerID = 8;
 
         // PID
-        public static final double launchV = 0.15;
-
-        public static final double launchP = 0.4;
+        public static final double launchP = 10;
         public static final double launchI = 0;
         public static final double launchD = 0;
 
-        public static final double shootVelocity = 60;
+        public static final double launchPFollower = 10;
+        public static final double launchIFollower = 0;
+        public static final double launchDFollower = 0;
+
+        public static final double shootVelocity = 70; //RPS
     }
 
     public static class AutoTrajectoryFileNames{

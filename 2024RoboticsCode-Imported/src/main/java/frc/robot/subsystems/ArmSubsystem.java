@@ -18,7 +18,7 @@ public class ArmSubsystem extends SubsystemBase{
     
     public enum ArmState{
         // This is where you add new arm position and set there angle in degrees, taken from Shuffleboard
-        NEUTRAL(140),
+        NEUTRAL(120),
         SHOOT_SPEAKER_FRONT(192),
         GROUND_PICKUP(95),
         SHOOT_SPEAKER_SIDE_CORNER(192);
@@ -116,8 +116,7 @@ public class ArmSubsystem extends SubsystemBase{
 
     private void setArmAngle(double angle){
         double feedForward = armFeedforward.calculate(getArmAngle(), angle);
-        //voltage is negative due to that being the "forward direction"
-        double clampedVoltage = MathUtil.clamp(pidController.calculate(getArmAngle(), angle), -2, 2);
+        double clampedVoltage = MathUtil.clamp(pidController.calculate(getArmAngle(), angle), -4, 4);
         armMotor.setVoltage(clampedVoltage);
     }
 

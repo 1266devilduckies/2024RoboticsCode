@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LaunchSubsystem;
 import frc.robot.subsystems.IntakeSubsystem.IntakeSpinState;
@@ -14,8 +15,8 @@ public class Shoot extends Command {
     private double speed;
 
     private double startTime = 0;
-    private final double timeLimit = 4;
-    private final double feedTime = 2;
+    private final double timeLimit = 5;
+    private final double feedTime = 3;
 
     public Shoot(LaunchSubsystem subsystem, IntakeSubsystem intakeSubsystem, double speed){
         this.launchSubsystem = subsystem;
@@ -31,9 +32,9 @@ public class Shoot extends Command {
 
     @Override
     public void execute(){
-        launchSubsystem.setLaunchMotorSpeed(-1 * speed);
+        launchSubsystem.setLaunchMotorSpeed(-1 * Constants.Launch.shootVelocity);
 
-        if (startTime + feedTime > Timer.getFPGATimestamp()){
+        if ((startTime + feedTime) < Timer.getFPGATimestamp()){
             intakeSubsystem.setSpinState(IntakeSpinState.TAKE_IN);
         }
     }

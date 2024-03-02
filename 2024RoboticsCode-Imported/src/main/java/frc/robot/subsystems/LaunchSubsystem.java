@@ -43,21 +43,19 @@ public class LaunchSubsystem extends SubsystemBase {
 
         velocityRequest = new VelocityVoltage(0).withSlot(0);
 
-        // launchMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        // launchMotorConfig.CurrentLimits.StatorCurrentLimit = 35;
+        launchMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        launchMotorConfig.CurrentLimits.StatorCurrentLimit = 50;
 
-        // launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        // launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimit = 35;
+        launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimit = 60;
 
-        launchMotorConfig.Slot0.kV = Constants.Launch.launchV;
         launchMotorConfig.Slot0.kP = Constants.Launch.launchP;
         launchMotorConfig.Slot0.kI = Constants.Launch.launchI;
         launchMotorConfig.Slot0.kD = Constants.Launch.launchD;
     
-        launchMotorFollowerConfig.Slot0.kV = Constants.Launch.launchV;
-        launchMotorFollowerConfig.Slot0.kP = Constants.Launch.launchP;
-        launchMotorFollowerConfig.Slot0.kI = Constants.Launch.launchI;
-        launchMotorFollowerConfig.Slot0.kD = Constants.Launch.launchD;
+        launchMotorFollowerConfig.Slot0.kP = Constants.Launch.launchPFollower;
+        launchMotorFollowerConfig.Slot0.kI = Constants.Launch.launchIFollower;
+        launchMotorFollowerConfig.Slot0.kD = Constants.Launch.launchDFollower;
 
         launchMotor.getConfigurator().apply(launchMotorConfig);
         launchMotorFollower.getConfigurator().apply(launchMotorFollowerConfig);
@@ -65,6 +63,8 @@ public class LaunchSubsystem extends SubsystemBase {
         launchMotor.setNeutralMode(NeutralModeValue.Coast);
         launchMotorFollower.setNeutralMode(NeutralModeValue.Coast);
 
+        leftFF = -1;
+        rightFF = -2;
     }
 
     @Override
@@ -73,8 +73,8 @@ public class LaunchSubsystem extends SubsystemBase {
     }
 
     public void setLaunchMotorSpeed(double desiredVelocity_RPS){
-        launchMotor.setControl(velocityRequest.withVelocity(desiredVelocity_RPS).withFeedForward(leftFF));
-        launchMotorFollower.setControl(velocityRequest.withVelocity(desiredVelocity_RPS).withFeedForward(rightFF));
+        launchMotor.setControl(velocityRequest.withVelocity(desiredVelocity_RPS).withFeedForward(leftFF).withAcceleration(-30));
+        launchMotorFollower.setControl(velocityRequest.withVelocity(desiredVelocity_RPS).withFeedForward(rightFF).withAcceleration(-30));
     }
 
     public void stopLaunchMotors(){
