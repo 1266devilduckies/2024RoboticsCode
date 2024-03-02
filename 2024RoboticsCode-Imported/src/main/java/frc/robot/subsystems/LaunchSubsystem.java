@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.controls.compound.Diff_VelocityDutyCycle_Velocity;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -15,6 +16,9 @@ import frc.robot.Constants;
 import frc.robot.RobotContainer;
 
 public class LaunchSubsystem extends SubsystemBase {
+
+    VelocityVoltage velocityRequest;
+    double leftFF, rightFF;
     
     TalonFX launchMotor = new TalonFX(Constants.Launch.launchMotorID);
     TalonFX launchMotorFollower = new TalonFX(Constants.Launch.launchMotorFollowerID);
@@ -23,19 +27,37 @@ public class LaunchSubsystem extends SubsystemBase {
     TalonFXConfiguration launchMotorFollowerConfig = new TalonFXConfiguration();
 
     private boolean holdingNote = true;
-    private double lastTickPosition = 0;
 
-    final DutyCycleOut dutyCycleOut = new DutyCycleOut(0.0);
+    /**
+     * <b> Units: </b>
+     * Rotations per second
+     */
+    double desiredLeftVelocity = 0;
+    /**
+     * <b> Units: </b>
+     * Rotations per second
+     */
+    double desiredRightVelocity = 0;
 
     public LaunchSubsystem(RobotContainer robotContainer){
-        launchMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        launchMotorConfig.CurrentLimits.StatorCurrentLimit = 35;
 
-        launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimit = 35;
+        velocityRequest = new VelocityVoltage(0).withSlot(0);
 
-        launchMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
-        launchMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.5;
+        // launchMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        // launchMotorConfig.CurrentLimits.StatorCurrentLimit = 35;
+
+        // launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        // launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimit = 35;
+
+        launchMotorConfig.Slot0.kV = Constants.Launch.launchV;
+        launchMotorConfig.Slot0.kP = Constants.Launch.launchP;
+        launchMotorConfig.Slot0.kI = Constants.Launch.launchI;
+        launchMotorConfig.Slot0.kD = Constants.Launch.launchD;
+    
+        launchMotorFollowerConfig.Slot0.kV = Constants.Launch.launchV;
+        launchMotorFollowerConfig.Slot0.kP = Constants.Launch.launchP;
+        launchMotorFollowerConfig.Slot0.kI = Constants.Launch.launchI;
+        launchMotorFollowerConfig.Slot0.kD = Constants.Launch.launchD;
 
         launchMotor.getConfigurator().apply(launchMotorConfig);
         launchMotorFollower.getConfigurator().apply(launchMotorFollowerConfig);
@@ -50,9 +72,9 @@ public class LaunchSubsystem extends SubsystemBase {
         
     }
 
-    public void setLaunchMotorSpeed(double speed){
-        launchMotor.setControl(dutyCycleOut.withOutput(speed));
-        launchMotorFollower.setControl(dutyCycleOut.withOutput(speed));
+    public void setLaunchMotorSpeed(double desiredVelocity_RPS){
+        launchMotor.setControl(velocityRequest.withVelocity(desiredVelocity_RPS).withFeedForward(leftFF));
+        launchMotorFollower.setControl(velocityRequest.withVelocity(desiredVelocity_RPS).withFeedForward(rightFF));
     }
 
     public void stopLaunchMotors(){
