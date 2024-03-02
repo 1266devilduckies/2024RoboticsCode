@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
@@ -10,7 +9,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -69,6 +67,12 @@ public class ArmSubsystem extends SubsystemBase{
         armMotorFollowerConfiguration.Slot0.kP = Constants.Arm.armDefaultP;
         armMotorFollowerConfiguration.Slot0.kI = Constants.Arm.armDefaultI;
         armMotorFollowerConfiguration.Slot0.kD = Constants.Arm.armDefaultD;
+
+        armMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+        armMotorConfiguration.CurrentLimits.StatorCurrentLimit = 30;
+
+        armMotorFollowerConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+        armMotorFollowerConfiguration.CurrentLimits.StatorCurrentLimit = 30;
 
         armMotor.getConfigurator().apply(armMotorConfiguration);
         armMotorFollower.getConfigurator().apply(armMotorFollowerConfiguration);

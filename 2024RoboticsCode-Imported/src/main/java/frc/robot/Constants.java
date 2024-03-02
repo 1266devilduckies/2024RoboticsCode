@@ -35,8 +35,8 @@ public final class Constants {
 
         // Speeds
         public static final double intakeStoppedSpeed = 0;
-        public static final double intakeTakeInSpeed = -0.6;
-        public static final double intakeShootOutSpeed = 0.6;
+        public static final double intakeTakeInSpeed = 1;
+        public static final double intakeShootOutSpeed = -1;
 
         // PID
         public static final double intakeP = 0;

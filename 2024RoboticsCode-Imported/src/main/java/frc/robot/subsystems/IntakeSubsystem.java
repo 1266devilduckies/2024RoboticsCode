@@ -11,6 +11,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,7 +28,7 @@ public class IntakeSubsystem extends SubsystemBase {
         STOPPED;
     }
     
-    VictorSPX intakeSpinMotor = new VictorSPX(Constants.Intake.spinID);
+    TalonSRX intakeSpinMotor = new TalonSRX(Constants.Intake.spinID);
     TalonSRX intakeSpinMotorFollower = new TalonSRX(Constants.Intake.spinIDFollower);
 
     IntakeSpinState intakeSpinState = IntakeSpinState.STOPPED;
@@ -37,15 +38,21 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem(RobotContainer robotContainer){
         this.robotContainer = robotContainer;
         configure();
+        shuffleboard();
     }
 
     private void configure(){
         intakeSpinMotor.setNeutralMode(NeutralMode.Coast);
         intakeSpinMotorFollower.setNeutralMode(NeutralMode.Coast);
 
-        intakeSpinMotorFollower.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 25, 0.5));
+        intakeSpinMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 40, 0.5));
+        intakeSpinMotorFollower.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 40, 0.5));
 
         intakeSpinMotorFollower.follow(intakeSpinMotor);
+    }
+
+    private void shuffleboard(){
+        //SmartDashboard.putString("SpinState", () -> getIntakeSpinState().toString());
     }
 
     @Override
@@ -53,15 +60,15 @@ public class IntakeSubsystem extends SubsystemBase {
         //set the spinMotor to whatever intakeSpinState is
         switch(intakeSpinState){
             case STOPPED:
-                intakeSpinMotorFollower.set(ControlMode.PercentOutput, Constants.Intake.intakeStoppedSpeed);
+                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeStoppedSpeed);
                 SmartDashboard.putString("SpinState", "STOPPED");
                 break;
             case TAKE_IN:
-                intakeSpinMotorFollower.set(ControlMode.PercentOutput, Constants.Intake.intakeTakeInSpeed);
+                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeTakeInSpeed);
                 SmartDashboard.putString("SpinState", "TAKE_IN");
                 break;
             case SHOOT_OUT:
-                intakeSpinMotorFollower.set(ControlMode.PercentOutput, Constants.Intake.intakeShootOutSpeed);
+                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeShootOutSpeed);
                 SmartDashboard.putString("SpinState", "SHOOT_OUT");
         }
 
@@ -76,7 +83,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean currentSense(){
-        if(intakeSpinMotorFollower.getStatorCurrent() > 35){
+        if(intakeSpinMotorFollower.getStatorCurrent() > 25){
             return true;
         }
         return false;
@@ -86,4 +93,7 @@ public class IntakeSubsystem extends SubsystemBase {
         this.intakeSpinState = state;
     }
 
+    public IntakeSpinState getIntakeSpinState(){
+        return intakeSpinState;
+    }
 }

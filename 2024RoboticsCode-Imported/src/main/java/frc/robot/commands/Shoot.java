@@ -27,12 +27,12 @@ public class Shoot extends Command {
     @Override
     public void initialize(){
         startTime = Timer.getFPGATimestamp();
-
-        launchSubsystem.setLaunchMotorSpeed(-1 * speed);
     }
 
     @Override
     public void execute(){
+        launchSubsystem.setLaunchMotorSpeed(-1 * speed);
+
         if (startTime + feedTime > Timer.getFPGATimestamp()){
             intakeSubsystem.setSpinState(IntakeSpinState.TAKE_IN);
         }
