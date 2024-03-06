@@ -40,6 +40,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
                         e.printStackTrace();
                 }
                 swerveDrive.setHeadingCorrection(false);
+                
+                // Uncomment to re-enable drive
                 this.setDefaultCommand(new TeleopSwerve(this));
         }
 

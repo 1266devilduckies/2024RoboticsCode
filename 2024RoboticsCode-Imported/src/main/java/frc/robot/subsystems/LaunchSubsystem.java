@@ -44,10 +44,10 @@ public class LaunchSubsystem extends SubsystemBase {
         velocityRequest = new VelocityVoltage(0).withSlot(0);
 
         launchMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        launchMotorConfig.CurrentLimits.StatorCurrentLimit = 70;
+        launchMotorConfig.CurrentLimits.StatorCurrentLimit = 90; //70
 
         launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimitEnable = true;
-        launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimit = 80;
+        launchMotorFollowerConfig.CurrentLimits.StatorCurrentLimit = 90; //80
 
         launchMotorConfig.Slot0.kP = Constants.Launch.launchP;
         launchMotorConfig.Slot0.kI = Constants.Launch.launchI;
