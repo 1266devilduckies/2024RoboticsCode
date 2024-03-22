@@ -16,7 +16,7 @@ public class Shoot extends Command {
 
     private double startTime = 0;
     private final double timeLimit = 5;
-    private final double feedTime = 3;
+    private final double feedTime = 2.5;
 
     public Shoot(LaunchSubsystem subsystem, IntakeSubsystem intakeSubsystem, double speed){
         this.launchSubsystem = subsystem;

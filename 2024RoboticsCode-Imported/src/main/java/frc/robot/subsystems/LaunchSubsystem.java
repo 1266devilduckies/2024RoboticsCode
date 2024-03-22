@@ -63,8 +63,8 @@ public class LaunchSubsystem extends SubsystemBase {
         launchMotor.setNeutralMode(NeutralModeValue.Coast);
         launchMotorFollower.setNeutralMode(NeutralModeValue.Coast);
 
-        leftFF = -1;
-        rightFF = -2;
+        leftFF = 1;
+        rightFF = 2;
     }
 
     @Override
@@ -73,8 +73,8 @@ public class LaunchSubsystem extends SubsystemBase {
     }
 
     public void setLaunchMotorSpeed(double desiredVelocity_RPS){
-        launchMotor.setControl(velocityRequest.withVelocity(desiredVelocity_RPS).withFeedForward(leftFF).withAcceleration(-30));
-        launchMotorFollower.setControl(velocityRequest.withVelocity(desiredVelocity_RPS).withFeedForward(rightFF).withAcceleration(-30));
+        launchMotor.setControl(velocityRequest.withVelocity(-desiredVelocity_RPS).withFeedForward(leftFF).withAcceleration(-30));
+        launchMotorFollower.setControl(velocityRequest.withVelocity(-desiredVelocity_RPS).withFeedForward(rightFF).withAcceleration(-30));
     }
 
     public void stopLaunchMotors(){

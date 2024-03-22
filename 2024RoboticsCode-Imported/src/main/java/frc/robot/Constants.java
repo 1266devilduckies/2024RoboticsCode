@@ -30,14 +30,15 @@ public final class Constants {
     }
 
     public static class Intake {
-        public static final int spinID = 24;
+        public static final int spinID = 7;
+        public static final int spinIDFollower = 9;
 
         public static final int beambreakDIO = 0;
 
         // Speeds
         public static final double intakeStoppedSpeed = 0;
-        public static final double intakeTakeInSpeed = 0.4;
-        public static final double intakeShootOutSpeed = -0.4;
+        public static final double intakeTakeInSpeed = 0.6;
+        public static final double intakeShootOutSpeed = -0.6;
 
         // PID
         public static final double intakeP = 0;
@@ -46,8 +47,8 @@ public final class Constants {
     }
 
     public static class Arm {
-        public static final int armID = 6;
-        public static final int encoderID = 25; //shared with spin follower
+        public static final int armID = 23;
+        public static final int encoderID = 25;
 
         // IGNORE THIS, AVOID CHANGING
         public static final double armDefaultP = 0;
@@ -61,12 +62,13 @@ public final class Constants {
 
         // PID (THIS IS WHAT MATTERS, FIRST INCREASE VOLTAGE CLAMP, THEN MESS WITH THIS)
         // (Add I and D if needed, but it shouldn't be needed.)
-        public static final double armP = 0.5;
+        public static final double armP = 0.25;
+        public static final double armD = 0.01;
     }
 
     public static class Launch {
-        public static final int launchMotorID = 7;
-        public static final int launchMotorFollowerID = 8;
+        public static final int launchMotorID = 5;
+        public static final int launchMotorFollowerID = 26;
 
         // PID
         public static final double launchP = 10;

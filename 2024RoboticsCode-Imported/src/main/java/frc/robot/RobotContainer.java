@@ -66,31 +66,31 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Intake note and return
-    /*driverJoystick.cross().onTrue(new SequentialCommandGroup(
-      new MoveArm(armSubsystem, ArmState.GROUND_PICKUP), 
+    operatorJoystick.a().onTrue(new SequentialCommandGroup(
+      new MoveArm(armSubsystem, ArmState.GROUND_PICKUP),
       new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.TAKE_IN, false),
-      new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.SHOOT_OUT, true),
       new MoveArm(armSubsystem, ArmState.NEUTRAL)
       ));
-    driverJoystick.cross().onFalse(new SequentialCommandGroup(
+    operatorJoystick.a().onFalse(new SequentialCommandGroup(
       new MoveArm(armSubsystem, ArmState.NEUTRAL),
-      new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.STOPPED, false)));*/
-
-    // spit out
-    driverJoystick.triangle().onTrue(new SequentialCommandGroup(
-      new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.SHOOT_OUT, false)
+      new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.STOPPED, false)
     ));
 
-    driverJoystick.triangle().onFalse(new SequentialCommandGroup(
+    // spit out
+    operatorJoystick.b().onTrue(new SequentialCommandGroup(
+      new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.SHOOT_OUT, true)
+    ));
+
+    operatorJoystick.b().onFalse(new SequentialCommandGroup(
       new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.STOPPED, false)
     ));
 
     // Shoot note and return
-    /*driverJoystick.circle().onTrue(new SequentialCommandGroup(
+    operatorJoystick.y().onTrue(new SequentialCommandGroup(
       new MoveArm(armSubsystem, ArmState.SHOOT_SPEAKER_FRONT),
       new Shoot(launchSubsystem, intakeSubsystem, 1)
     ));
-    driverJoystick.circle().onFalse(new MoveArm(armSubsystem, ArmState.NEUTRAL));*/
+    operatorJoystick.y().onFalse(new MoveArm(armSubsystem, ArmState.NEUTRAL));
 
     // Add more later
 

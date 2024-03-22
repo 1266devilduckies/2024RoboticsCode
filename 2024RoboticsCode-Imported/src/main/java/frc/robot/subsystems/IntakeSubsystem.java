@@ -31,8 +31,10 @@ public class IntakeSubsystem extends SubsystemBase {
     }
     
     TalonFX intakeSpinMotor = new TalonFX(Constants.Intake.spinID);
+    TalonFX intakeSpinFollower = new TalonFX(Constants.Intake.spinIDFollower);
 
     TalonFXConfiguration intakeMotorConfiguration;
+    TalonFXConfiguration intakeFollowerConfiguration;
 
     IntakeSpinState intakeSpinState = IntakeSpinState.STOPPED;
 
@@ -43,16 +45,24 @@ public class IntakeSubsystem extends SubsystemBase {
     public IntakeSubsystem(RobotContainer robotContainer){
         this.robotContainer = robotContainer;
         this.intakeMotorConfiguration = new TalonFXConfiguration();
+        this.intakeFollowerConfiguration = new TalonFXConfiguration();
         configure();
     }
 
     private void configure(){
-        intakeMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        intakeSpinMotor.setNeutralMode(NeutralModeValue.Coast);
+        intakeSpinFollower.setNeutralMode(NeutralModeValue.Coast);
 
         intakeMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
         intakeMotorConfiguration.CurrentLimits.SupplyCurrentLimit = 35;
 
+        intakeFollowerConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+        intakeFollowerConfiguration.CurrentLimits.SupplyCurrentLimit = 35;
+
+        intakeSpinFollower.setInverted(false);
+
         intakeSpinMotor.getConfigurator().apply(intakeMotorConfiguration);
+        intakeSpinFollower.getConfigurator().apply(intakeFollowerConfiguration);
     }
 
     @Override
@@ -60,13 +70,16 @@ public class IntakeSubsystem extends SubsystemBase {
         //set the spinMotor to whatever intakeSpinState is
         switch(intakeSpinState){
             case STOPPED:
-                intakeSpinMotor.setControl(new DutyCycleOut(Constants.Intake.intakeStoppedSpeed));
+                intakeSpinMotor.set(Constants.Intake.intakeStoppedSpeed);
+                //intakeSpinFollower.set(Constants.Intake.intakeStoppedSpeed);
                 break;
             case TAKE_IN:
-                intakeSpinMotor.setControl(new DutyCycleOut(Constants.Intake.intakeTakeInSpeed));
+                intakeSpinMotor.set(Constants.Intake.intakeTakeInSpeed);
+                //intakeSpinFollower.set(Constants.Intake.intakeTakeInSpeed);
                 break;
             case SHOOT_OUT:
-                intakeSpinMotor.setControl(new DutyCycleOut(Constants.Intake.intakeStoppedSpeed));
+                intakeSpinMotor.set(Constants.Intake.intakeShootOutSpeed);
+                //intakeSpinFollower.set(Constants.Intake.intakeShootOutSpeed);
         }
 
         // check if holding note
@@ -83,7 +96,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean holdingNote(){
-        return beambreak.get();
+        return !beambreak.get();
     }
 
     public boolean currentSense(){

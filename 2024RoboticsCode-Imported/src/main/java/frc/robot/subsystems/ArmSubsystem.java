@@ -19,10 +19,10 @@ public class ArmSubsystem extends SubsystemBase{
     
     public enum ArmState{
         // This is where you add new arm position and set there angle in degrees, taken from Shuffleboard
-        NEUTRAL(120),
-        SHOOT_SPEAKER_FRONT(192),
-        GROUND_PICKUP(95),
-        SHOOT_SPEAKER_SIDE_CORNER(192);
+        NEUTRAL(30),
+        SHOOT_SPEAKER_FRONT(100),
+        GROUND_PICKUP(110), 
+        SHOOT_SPEAKER_SIDE_CORNER(100);
 
         private double angle;
 
@@ -41,7 +41,7 @@ public class ArmSubsystem extends SubsystemBase{
         Constants.Arm.armV
     );
 
-    PIDController pidController = new PIDController(Constants.Arm.armP, 0, 0);
+    PIDController pidController = new PIDController(Constants.Arm.armP, 0, Constants.Arm.armD);
 
     CANcoder armEncoder = new CANcoder(Constants.Arm.encoderID);
 
@@ -63,19 +63,20 @@ public class ArmSubsystem extends SubsystemBase{
         armMotorConfiguration.Slot0.kI = Constants.Arm.armDefaultI;
         armMotorConfiguration.Slot0.kD = Constants.Arm.armDefaultD;
 
+        armMotor.setNeutralMode(NeutralModeValue.Brake);
+
         armMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         armMotorConfiguration.CurrentLimits.StatorCurrentLimit = 30;
-
     }
 
     @Override
     public void periodic(){
         //DEBUG
         if(RobotContainer.operatorJoystick.getRawAxis(Constants.OperatorConstants.elbowMovementAxis) > 0.05){
-            armMotor.setVoltage(2);
+            armMotor.setVoltage(1);
         }
         else if(RobotContainer.operatorJoystick.getRawAxis(Constants.OperatorConstants.elbowMovementAxis) < -0.05){
-            armMotor.setVoltage(-2);
+            armMotor.setVoltage(-1);
         }
         else{
             armMotor.setVoltage(0);
@@ -94,12 +95,12 @@ public class ArmSubsystem extends SubsystemBase{
 
     public double getArmAngle(){
         // 1 degree = 11.37
-        return armEncoder.getAbsolutePosition().getValueAsDouble() / 11.37;
+        return armEncoder.getAbsolutePosition().getValueAsDouble() * 360.0;
     }
 
     private void setArmAngle(double angle){
         //double feedForward = armFeedforward.calculate(getArmAngle(), angle);
-        double clampedVoltage = MathUtil.clamp(pidController.calculate(getArmAngle(), angle), -3, 3);
+        double clampedVoltage = MathUtil.clamp(-pidController.calculate(getArmAngle(), angle), -4, 4);
         armMotor.setVoltage(clampedVoltage);
     }
 
