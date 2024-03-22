@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -42,19 +43,17 @@ public class ArmSubsystem extends SubsystemBase{
 
     PIDController pidController = new PIDController(Constants.Arm.armP, 0, 0);
 
-    WPI_TalonSRX armEncoder = new WPI_TalonSRX(Constants.Arm.encoderID);
+    CANcoder armEncoder = new CANcoder(Constants.Arm.encoderID);
 
     TalonFX armMotor = new TalonFX(Constants.Arm.armID);
-    TalonFX armMotorFollower = new TalonFX(Constants.Arm.armFollowerID);
+    //TalonFX armMotorFollower = new TalonFX(Constants.Arm.armFollowerID);
 
     TalonFXConfiguration armMotorConfiguration;
-    TalonFXConfiguration armMotorFollowerConfiguration;
 
     ArmState currentArmState = null;
 
     public ArmSubsystem(RobotContainer robotContainer){
         armMotorConfiguration = new TalonFXConfiguration();
-        armMotorFollowerConfiguration = new TalonFXConfiguration();   
         
         configure();
     }
@@ -64,40 +63,24 @@ public class ArmSubsystem extends SubsystemBase{
         armMotorConfiguration.Slot0.kI = Constants.Arm.armDefaultI;
         armMotorConfiguration.Slot0.kD = Constants.Arm.armDefaultD;
 
-        armMotorFollowerConfiguration.Slot0.kP = Constants.Arm.armDefaultP;
-        armMotorFollowerConfiguration.Slot0.kI = Constants.Arm.armDefaultI;
-        armMotorFollowerConfiguration.Slot0.kD = Constants.Arm.armDefaultD;
-
         armMotorConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
         armMotorConfiguration.CurrentLimits.StatorCurrentLimit = 30;
 
-        armMotorFollowerConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-        armMotorFollowerConfiguration.CurrentLimits.StatorCurrentLimit = 30;
-
-        armMotor.getConfigurator().apply(armMotorConfiguration);
-        armMotorFollower.getConfigurator().apply(armMotorFollowerConfiguration);
-
-        armMotor.setNeutralMode(NeutralModeValue.Brake);
-        armMotorFollower.setNeutralMode(NeutralModeValue.Brake);
-
-        armMotor.setInverted(true);
-        armMotorFollower.setInverted(true);
-
-        armMotorFollower.setControl(new Follower(armMotor.getDeviceID(), true));
     }
 
     @Override
     public void periodic(){
         //DEBUG
         if(RobotContainer.operatorJoystick.getRawAxis(Constants.OperatorConstants.elbowMovementAxis) > 0.05){
-            armMotor.setVoltage(2.5);
+            armMotor.setVoltage(2);
         }
         else if(RobotContainer.operatorJoystick.getRawAxis(Constants.OperatorConstants.elbowMovementAxis) < -0.05){
-            armMotor.setVoltage(-2.5);
+            armMotor.setVoltage(-2);
         }
         else{
             armMotor.setVoltage(0);
         }
+        //DEBUG
 
         SmartDashboard.putNumber("Arm Angle", getArmAngle());
 
@@ -111,12 +94,12 @@ public class ArmSubsystem extends SubsystemBase{
 
     public double getArmAngle(){
         // 1 degree = 11.37
-        return armEncoder.getSensorCollection().getPulseWidthRiseToFallUs() / 11.37;
+        return armEncoder.getAbsolutePosition().getValueAsDouble() / 11.37;
     }
 
     private void setArmAngle(double angle){
-        double feedForward = armFeedforward.calculate(getArmAngle(), angle);
-        double clampedVoltage = MathUtil.clamp(pidController.calculate(getArmAngle(), angle), -4, 4);
+        //double feedForward = armFeedforward.calculate(getArmAngle(), angle);
+        double clampedVoltage = MathUtil.clamp(pidController.calculate(getArmAngle(), angle), -3, 3);
         armMotor.setVoltage(clampedVoltage);
     }
 

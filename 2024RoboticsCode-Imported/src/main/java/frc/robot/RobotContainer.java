@@ -66,7 +66,7 @@ public class RobotContainer {
 
   private void configureBindings() {
     // Intake note and return
-    driverJoystick.cross().onTrue(new SequentialCommandGroup(
+    /*driverJoystick.cross().onTrue(new SequentialCommandGroup(
       new MoveArm(armSubsystem, ArmState.GROUND_PICKUP), 
       new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.TAKE_IN, false),
       new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.SHOOT_OUT, true),
@@ -74,7 +74,7 @@ public class RobotContainer {
       ));
     driverJoystick.cross().onFalse(new SequentialCommandGroup(
       new MoveArm(armSubsystem, ArmState.NEUTRAL),
-      new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.STOPPED, false)));
+      new IntakeSpin(intakeSubsystem, launchSubsystem, IntakeSpinState.STOPPED, false)));*/
 
     // spit out
     driverJoystick.triangle().onTrue(new SequentialCommandGroup(
@@ -86,11 +86,11 @@ public class RobotContainer {
     ));
 
     // Shoot note and return
-    driverJoystick.circle().onTrue(new SequentialCommandGroup(
+    /*driverJoystick.circle().onTrue(new SequentialCommandGroup(
       new MoveArm(armSubsystem, ArmState.SHOOT_SPEAKER_FRONT),
       new Shoot(launchSubsystem, intakeSubsystem, 1)
     ));
-    driverJoystick.circle().onFalse(new MoveArm(armSubsystem, ArmState.NEUTRAL));
+    driverJoystick.circle().onFalse(new MoveArm(armSubsystem, ArmState.NEUTRAL));*/
 
     // Add more later
 

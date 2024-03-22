@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -28,8 +29,9 @@ public class IntakeSubsystem extends SubsystemBase {
         STOPPED;
     }
     
-    TalonSRX intakeSpinMotor = new TalonSRX(Constants.Intake.spinID);
-    TalonSRX intakeSpinMotorFollower = new TalonSRX(Constants.Intake.spinIDFollower);
+    TalonFX intakeSpinMotor = new TalonFX(Constants.Intake.spinID);
+
+    TalonFXConfiguration intakeMotorConfiguration;
 
     IntakeSpinState intakeSpinState = IntakeSpinState.STOPPED;
 
@@ -37,22 +39,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
     public IntakeSubsystem(RobotContainer robotContainer){
         this.robotContainer = robotContainer;
+        this.intakeMotorConfiguration = new TalonFXConfiguration();
         configure();
-        shuffleboard();
     }
 
     private void configure(){
-        intakeSpinMotor.setNeutralMode(NeutralMode.Coast);
-        intakeSpinMotorFollower.setNeutralMode(NeutralMode.Coast);
+        intakeMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-        intakeSpinMotor.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 40, 0.5));
-        intakeSpinMotorFollower.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 35, 40, 0.5));
+        intakeMotorConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+        intakeMotorConfiguration.CurrentLimits.SupplyCurrentLimit = 35;
 
-        intakeSpinMotorFollower.follow(intakeSpinMotor);
-    }
-
-    private void shuffleboard(){
-        //SmartDashboard.putString("SpinState", () -> getIntakeSpinState().toString());
+        intakeSpinMotor.getConfigurator().apply(intakeMotorConfiguration);
     }
 
     @Override
@@ -60,16 +57,13 @@ public class IntakeSubsystem extends SubsystemBase {
         //set the spinMotor to whatever intakeSpinState is
         switch(intakeSpinState){
             case STOPPED:
-                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeStoppedSpeed);
-                SmartDashboard.putString("SpinState", "STOPPED");
+                intakeSpinMotor.setControl(new DutyCycleOut(Constants.Intake.intakeStoppedSpeed));
                 break;
             case TAKE_IN:
-                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeTakeInSpeed);
-                SmartDashboard.putString("SpinState", "TAKE_IN");
+                intakeSpinMotor.setControl(new DutyCycleOut(Constants.Intake.intakeTakeInSpeed));
                 break;
             case SHOOT_OUT:
-                intakeSpinMotor.set(ControlMode.PercentOutput, Constants.Intake.intakeShootOutSpeed);
-                SmartDashboard.putString("SpinState", "SHOOT_OUT");
+                intakeSpinMotor.setControl(new DutyCycleOut(Constants.Intake.intakeStoppedSpeed));
         }
 
         /*
@@ -83,7 +77,7 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public boolean currentSense(){
-        if(intakeSpinMotorFollower.getStatorCurrent() > 25){
+        if(intakeSpinMotor.getStatorCurrent().getValueAsDouble() > 25.0){
             return true;
         }
         return false;
