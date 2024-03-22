@@ -48,6 +48,6 @@ public class IntakeSpin extends Command{
         if(rising){
             return (timeStart + timeWait) < Timer.getFPGATimestamp();
         }
-        return (initPosition + amountNeeded) > launchSubsystem.getMotorPosition(); 
+        return intakeSubsystem.holdingNote(); 
     }
 }

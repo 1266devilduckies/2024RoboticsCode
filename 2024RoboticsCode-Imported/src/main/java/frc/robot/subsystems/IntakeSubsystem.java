@@ -11,6 +11,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.motorcontrol.Victor;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -34,6 +35,8 @@ public class IntakeSubsystem extends SubsystemBase {
     TalonFXConfiguration intakeMotorConfiguration;
 
     IntakeSpinState intakeSpinState = IntakeSpinState.STOPPED;
+
+    DigitalInput beambreak = new DigitalInput(Constants.Intake.beambreakDIO);
 
     RobotContainer robotContainer;
 
@@ -66,6 +69,9 @@ public class IntakeSubsystem extends SubsystemBase {
                 intakeSpinMotor.setControl(new DutyCycleOut(Constants.Intake.intakeStoppedSpeed));
         }
 
+        // check if holding note
+
+
         /*
         // check for holding note, then pull it back a bit
         if(robotContainer.getLaunchSubsystem().checkForNote()){
@@ -74,6 +80,10 @@ public class IntakeSubsystem extends SubsystemBase {
                 new WaitCommand(0.1),
                 new IntakeSpin(this, IntakeSpinState.STOPPED)).schedule();
         }*/
+    }
+
+    public boolean holdingNote(){
+        return beambreak.get();
     }
 
     public boolean currentSense(){

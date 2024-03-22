@@ -32,6 +32,8 @@ public final class Constants {
     public static class Intake {
         public static final int spinID = 24;
 
+        public static final int beambreakDIO = 0;
+
         // Speeds
         public static final double intakeStoppedSpeed = 0;
         public static final double intakeTakeInSpeed = 0.4;
